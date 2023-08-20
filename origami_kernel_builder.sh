@@ -260,7 +260,7 @@ fi
             ;;
         5)
             clear
-            make clean && make mrproper && rm -rf "${PWD}"/out
+            make clean && make mrproper
             echo "done!"
             echo "press enter to continue or type 0 for Quit"
         read -r a1
