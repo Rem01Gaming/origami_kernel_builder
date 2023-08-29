@@ -122,6 +122,19 @@ execute_operation() {
 
             rm ./out/arch/${ARCH}/boot/Image.gz
             rm ./out/arch/${ARCH}/boot/Image.gz-dtb
+            
+            if [ ! -f "./arch/${ARCH}/configs/${DEFCONFIG}" ]; then
+               echo "${DEFCONFIG} not found, exited with error status 2."
+                if [ "$SEND_TO_TG" -eq 1 ]; then
+                   curl -s -X POST "https://api.telegram.org/bot$token/sendMessage" \
+                   -d chat_id="$chat_id" \
+                   -d "disable_web_page_preview=true" \
+                   -d "parse_mode=html" \
+                   -d text="<code>${DEFCONFIG}</code> not found, exited with error status 2."
+           fi
+        exit 2
+     fi
+            
             export KBUILD_BUILD_USER=${BUILDER}
             export KBUILD_BUILD_HOST=${BUILD_HOST}
             export LOCALVERSION=${localversion}
