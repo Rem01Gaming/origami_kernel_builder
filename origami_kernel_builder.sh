@@ -32,7 +32,8 @@ export TIMESTAMP
 KBUILD_COMPILER_STRING=$(./clang/bin/clang -v 2>&1 | head -n 1 | sed 's/(https..*//' | sed 's/ version//')
 export KBUILD_COMPILER_STRING
 export FW="RUI2"
-export zipn="Liquid-${CODENAME}-${FW}-${TIMESTAMP}-${RANDOM}"
+export random_num=${RANDOM}
+export zipn="Liquid-${CODENAME}-${FW}-${TIMESTAMP}-${random_num}"
 # Needed by script
 PROCS=$(nproc --all)
 
