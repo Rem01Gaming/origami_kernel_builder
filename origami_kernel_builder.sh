@@ -114,9 +114,9 @@ execute_operation() {
 <b>Date</b>: <code>$(date)</code>
 <b>Zip Name</b>: <code>${zipn}</code>
 <b>Defconfig</b>: <code>${DEFCONFIG}</code>
-<b>Compiler</b>: <code>${KBUILD_COMPILER_STRING}</code>
-<b>Branch</b>: <code>$(git rev-parse --abbrev-ref HEAD)</code>
-<b>Last Commit</b>: <code>$(git log --pretty=format:'"%h : %s"' -1)</code>
+<b>Compiler</b>: ${KBUILD_COMPILER_STRING}
+<b>Branch</b>: $(git rev-parse --abbrev-ref HEAD)
+<b>Last Commit</b>: $(git log --pretty=format:'"%h : %s"' -1)
 "
         fi
 
