@@ -194,7 +194,7 @@ fi
 
 cp ./out/arch/${ARCH}/boot/Image.gz-dtb ./anykernel3
 cd anykernel3
-zip -r9 "${zipn}".zip *
+zip -r9 "${zipn}".zip * -x .git README.md *placeholder
 checksum=$(sha512sum "${zipn}".zip | cut -f1 -d ' ')
 echo "Build took ${minutes} minute(s) and ${seconds} second(s)."
 echo "Kernel zip: ${PWD}/../out/target/${zipn}.zip"
