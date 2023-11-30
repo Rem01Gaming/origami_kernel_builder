@@ -117,7 +117,8 @@ send_msg_telegram() {
                 -F "disable_web_page_preview=true" \
                 -F "parse_mode=html" \
                 -F caption="Build failed after ${minutes} minutes and ${seconds} seconds." \
-                -o /dev/null
+                -o /dev/null \
+                -w "" >/dev/null 2>&1
         ;;
     3) curl -s -F document=@./out/target/"${zipn}".zip "https://api.telegram.org/bot$token/sendDocument" \
                 -F chat_id="$chat_id" \
@@ -125,14 +126,16 @@ send_msg_telegram() {
                 -F "parse_mode=html" \
                 -F caption="Build took ${minutes} minutes and ${seconds} seconds.
 <b>SHA512</b>: <code>${checksum}</code>" \
-                -o /dev/null
+                -o /dev/null \
+                -w "" >/dev/null 2>&1
 
         curl -s -F document=@./out/build.log "https://api.telegram.org/bot$token/sendDocument" \
                 -F chat_id="$chat_id" \
                 -F "disable_web_page_preview=true" \
                 -F "parse_mode=html" \
                 -F caption="Build log" \
-                -o /dev/null
+                -o /dev/null \
+                -w "" >/dev/null 2>&1
         ;;
     esac
 }
