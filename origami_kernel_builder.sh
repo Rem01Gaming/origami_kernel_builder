@@ -158,8 +158,8 @@ compile_kernel() {
         STRIP=llvm-strip \
         CC="clang" \
         CLANG_TRIPLE=aarch64-linux-gnu- \
-        CROSS_COMPILE="${PWD}/aarch64-gcc/bin/aarch64-linux-gnu-" \
-        CROSS_COMPILE_ARM32="${PWD}/arm-gcc/bin/arm-linux-gnueabihf-" \
+        CROSS_COMPILE=aarch64-linux-gnu- \
+        CROSS_COMPILE_ARM32=arm-linux-gnueabihf- \
         CONFIG_NO_ERROR_ON_MISMATCH=y \
         CONFIG_DEBUG_SECTION_MISMATCH=y \
         V=0 2>&1 | tee out/build.log
@@ -232,14 +232,12 @@ build_kernel() {
     fi
 }
 
-ragen_defconfig() {
-clear
+regen_defconfig() {
 make O=out ARCH=${ARCH} ${DEFCONFIG}
 cp -rf ./out/.config ./arch/${ARCH}/config/${DEFCONFIG}
 }
 
 open_menuconfig() {
-clear
 make O=out ARCH=${ARCH} ${DEFCONFIG}
 echo -e "Note: Make sure you save the config with name '.config'"
 echo -e "      else the defconfig will not saved automatically."
@@ -267,13 +265,16 @@ execute_operation() {
    }
 
    case "$1" in
-        1) build_kernel
+        1) clear
+            build_kernel
             loop_helper
             ;;
-        2) regen_defconfig
+        2) clear
+            regen_defconfig
             loop_helper
              ;;
-        3) open_menuconfig
+        3) clear
+             open_menuconfig
              loop_helper
              ;;
         4) clear
