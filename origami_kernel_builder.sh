@@ -178,7 +178,9 @@ zip_kernel() {
     cp ./out/arch/${ARCH}/boot/Image.gz-dtb ./anykernel
 
     # Zip the kernel
-    zip -r9 ./anykernel/"${zipn}".zip ./anykernel/* -x .git README.md *placeholder
+    cd ./anykernel
+    zip -r9 "${zipn}".zip * -x .git README.md *placeholder
+    cd ..
 
     # Generate checksum of kernel zip
     export checksum=$(sha512sum ./anykernel/"${zipn}".zip | cut -f1 -d ' ')
