@@ -260,11 +260,10 @@ execute_operation() {
 
    loop_helper() {
       read -p "Press enter to continue or type 0 for Quit: " a1
-
+      clear
       if [[ "$a1" == "0" ]]; then
           exit 0
       else
-          clear
           bash "$0"
       fi
    }
@@ -286,7 +285,7 @@ execute_operation() {
             make clean && make mrproper
             loop_helper
             ;;
-        5) exit 0 ;;
+        5) exit 0 && clear ;;
         6) help_msg ;;
         *) echo -e "${RED}error:${NOCOLOR} Invalid selection." && exit 1 ;;
     esac
