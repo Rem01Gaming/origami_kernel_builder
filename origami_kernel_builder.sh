@@ -68,14 +68,14 @@ if ! hash make curl bc 2>/dev/null; then
 fi
 
 if [ ! -d "${PWD}/clang" ]; then
-    echo "/clang not found!"
+    echo -e "${RED}error:${NOCOLOR} /clang not found!"
     echo "have you clone the clang?"
     exit 2
 fi
 
 
 if [ ! -d "${PWD}/anykernel" ]; then
-    echo "/anykernel not found!"
+    echo -e "${RED}error:${NOCOLOR} /anykernel not found!"
     echo "have you clone the anykernel?"
     exit 2
 fi
@@ -189,7 +189,7 @@ zip_kernel() {
 }
 
 build_kernel() {
-    echo "================================="
+    echo -e "${LIGHTBLUE}================================="
     echo "Build Started on ${BUILD_HOST}"
     echo "Build status: ${kver}"
     echo "Builder: ${BUILDER}"
@@ -201,7 +201,7 @@ build_kernel() {
     echo "Compiler: ${KBUILD_COMPILER_STRING}"
     echo "Branch: $(git rev-parse --abbrev-ref HEAD)"
     echo "Last Commit: $(git log --format="%s" -n 1): $(git log --format="%h" -n 1)"
-    echo "================================="
+    echo -e "=================================${NOCOLOR}"
 
     if [ "$SEND_TO_TG" -eq 1 ]; then
         send_msg_telegram 1
@@ -213,19 +213,19 @@ build_kernel() {
         if [ "$SEND_TO_TG" -eq 1 ]; then
             send_msg_telegram 2
         fi
-        echo "================================="
-        echo -e "${RED}Build failed${NOCOLOR} after ${minutes} minutes and ${seconds} seconds"
+        echo -e "${LIGHTBLUE}================================="
+        echo -e "${RED}Build failed${LIGHTBLUE} after ${minutes} minutes and ${seconds} seconds"
         echo "See build log for troubleshooting."
-        echo "================================="
+        echo -e "=================================${NOCOLOR}"
         exit 1
     fi
 
     zip_kernel
 
-    echo "================================="
+    echo -e "${LIGHTBLUE}================================="
     echo "Build took ${minutes} minutes and ${seconds} seconds."
     echo "SHA512: ${checksum}"
-    echo "================================="
+    echo -e "=================================${NOCOLOR}"
 
     if [ "$SEND_TO_TG" -eq 1 ]; then
         send_msg_telegram 3
@@ -239,8 +239,8 @@ cp -rf ./out/.config ./arch/${ARCH}/config/${DEFCONFIG}
 
 open_menuconfig() {
 make O=out ARCH=${ARCH} ${DEFCONFIG}
-echo -e "Note: Make sure you save the config with name '.config'"
-echo -e "      else the defconfig will not saved automatically."
+echo -e "${LIGHTGREEN}Note: Make sure you save the config with name '.config'"
+echo -e "      else the defconfig will not saved automatically.${NOCOLOR}"
 local count=8
 while [ $count -gt 0 ]; do
     echo -ne -e "${LIGHTCYAN}menuconfig will be opened in $count seconds... \r${NOCOLOR}"
@@ -289,14 +289,14 @@ execute_operation() {
 
 if [ $# -eq 0 ]; then
     clear
-    echo "What do you want to do today?"
+    echo -e "${LIGHTCYAN}What do you want to do today?"
     echo ""
     echo "1. Build a whole Kernel"
     echo "2. Regenerate defconfig"
     echo "3. Open menuconfig"
     echo "4. Clean"
     echo "5. Quit"
-    echo ""
+    echo -e "${NOCOLOR}"
     read -p "Choice the number: " choice
 else
     case "$1" in
