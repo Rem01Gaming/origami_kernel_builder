@@ -80,6 +80,13 @@ if [ ! -d "${PWD}/anykernel" ]; then
     exit 2
 fi
 
+# Exit while got interrupt signal
+exit_on_signal_interrupt() {
+    echo -e "\n\n${RED}Got interrupt signal.${NOCOLOR}"
+    exit 130
+}
+trap exit_on_signal_interrupt SIGINT
+
 help_msg() {
     echo "Usage: bash origami_kernel_builder.sh --choose=[Function]"
     echo ""
