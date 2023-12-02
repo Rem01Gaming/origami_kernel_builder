@@ -246,7 +246,7 @@ build_kernel() {
 
 regen_defconfig() {
 make O=out ARCH=${ARCH} ${DEFCONFIG}
-cp -rf ./out/.config ./arch/${ARCH}/config/${DEFCONFIG}
+cp -rf ./out/.config ./arch/${ARCH}/configs/${DEFCONFIG}
 }
 
 open_menuconfig() {
@@ -260,7 +260,7 @@ while [ $count -gt 0 ]; do
     ((count--))
 done
 make O=out menuconfig
-cp -rf ./out/.config ./arch/${ARCH}/config/${DEFCONFIG}
+cp -rf ./out/.config ./arch/${ARCH}/configs/${DEFCONFIG}
 }
 
 execute_operation() {
