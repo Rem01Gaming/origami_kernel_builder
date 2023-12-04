@@ -13,7 +13,6 @@
 # Define some things
 # Kernel common
 export ARCH=arm64
-export DEFCONFIG=even_defconfig
 export localversion=-X1.6
 export LINKER="ld.lld"
 # Telegram API
@@ -147,6 +146,38 @@ send_msg_telegram() {
     esac
 }
 
+show_defconfigs() {
+    defconfig_path="./arch/${ARCH}/configs"
+
+    # Check if folder exists
+    if [ ! -d "$defconfig_path" ]; then
+        echo -e "${RED}FATAL:${NOCOLOR} Seems not a valid Kernel linux"
+        exit 2
+    fi
+
+    echo -e "Available defconfigs:\n"
+
+    # List defconfigs and assign them to an array
+    defconfigs=($(ls "$defconfig_path"))
+
+    # Display enumerated defconfigs
+    for ((i=0; i<${#defconfigs[@]}; i++)); do
+        echo -e "${LIGHTCYAN}$i: ${defconfigs[i]}${NOCOLOR}"
+    done
+
+    echo ""
+    read -p "Select the defconfig you want to process: " choice
+
+    # Check if the choice is within the range of files
+    if [ $choice -ge 0 ] && [ $choice -lt ${#defconfigs[@]} ]; then
+        export DEFCONFIG="${defconfigs[choice]}"
+        echo "Selected defconfig: $DEFCONFIG"
+    else
+        echo -e "${RED}error:${NOCOLOR} Invalid choice"
+        exit 1
+    fi
+}
+
 compile_kernel() {
     rm ./out/arch/${ARCH}/boot/Image.gz-dtb 2>/dev/null
 
@@ -201,6 +232,8 @@ zip_kernel() {
 }
 
 build_kernel() {
+    show_defconfigs
+
     echo -e "${LIGHTBLUE}================================="
     echo "Build Started on ${BUILD_HOST}"
     echo "Build status: ${kver}"
@@ -245,11 +278,13 @@ build_kernel() {
 }
 
 regen_defconfig() {
+show_defconfigs
 make O=out ARCH=${ARCH} ${DEFCONFIG}
 cp -rf ./out/.config ./arch/${ARCH}/configs/${DEFCONFIG}
 }
 
 open_menuconfig() {
+show_defconfigs
 make O=out ARCH=${ARCH} ${DEFCONFIG}
 echo -e "${LIGHTGREEN}Note: Make sure you save the config with name '.config'"
 echo -e "      else the defconfig will not saved automatically.${NOCOLOR}"
