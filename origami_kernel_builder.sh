@@ -59,10 +59,10 @@ if [ "$script_permissions" -lt 777 ]; then
     exit 126
 fi
 
-# Check requirements
-if ! hash make curl bc 2>/dev/null; then
+# Check dependencies
+if ! hash make curl bc zip 2>/dev/null; then
         echo -e "${RED}error:${NOCOLOR} Environment has missing dependencies"
-        echo "Install make, curl, and bc !"
+        echo "Install make, curl, bc, and zip !"
         exit 127
 fi
 
