@@ -225,7 +225,7 @@ zip_kernel() {
 
     # Move the kernel zip to ./out/target
     if [ ! -d "./out/target" ]; then
-        mkdir ../out/target
+        mkdir ./out/target
     fi
     rm -f ./anykernel/Image.gz-dtb
     mv ./anykernel/${zipn}.zip ./out/target
