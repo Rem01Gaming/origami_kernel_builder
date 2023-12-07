@@ -15,6 +15,7 @@ This script is designed to automate the process of building an Android kernel, i
 - `make`
 - `curl`
 - `bc`
+- `zip`
 - Clang and anykernel repositories cloned locally
 
 ## Usage
