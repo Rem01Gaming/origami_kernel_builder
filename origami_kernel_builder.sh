@@ -10,6 +10,19 @@
 # Everyone is permitted to copy and distribute verbatim copies
 # of this license document, but changing it is not allowed.
 
+# Build number
+counter_file=".buildnumber"
+
+if [ ! -f "$counter_file" ]; then
+	echo $(echo $(date +"%m")) 0 > "$counter_file"  # Initialize counter file if it doesn't exist
+fi
+
+if [[ ! $(cat $counter_file | awk '{print $1}') == $(echo $(date +"%m")) ]]; then
+	echo $(echo $(date +"%m")) 1 > "$counter_file" # Reset
+else
+	echo $(echo $(date +"%m")) $(($(cat $counter_file | awk '{print $2}') + 1)) > $counter_file
+fi
+
 # Define some things
 # Kernel common
 export ARCH=arm64
@@ -28,7 +41,7 @@ export BUILD_HOST="DigitalOcean"
 export TIMESTAMP=$(date +"%Y%m%d")-$(date +"%H%M%S")
 export KBUILD_COMPILER_STRING=$(./clang/bin/clang -v 2>&1 | head -n 1 | sed 's/(https..*//' | sed 's/ version//')
 export FW="RUI2"
-export zipn="Liquid-${CODENAME}-${FW}-${TIMESTAMP}"
+export zipn="Liquid-${CODENAME}-${FW}-${TIMESTAMP}-$(cat $counter_file | awk '{print $2}')st"
 # Needed by script
 export PATH="${PWD}/clang/bin:${PATH}"
 PROCS=$(nproc --all)
@@ -107,6 +120,7 @@ send_msg_telegram() {
                 -d text="<b>~~~ ORIGAMI CI ~~~</b>
 <b>Build Started on ${BUILD_HOST}</b>
 <b>Build status</b>: <code>${kver}</code>
+<b>Build number</b>: $(cat $counter_file | awk '{print $2}')st
 <b>Builder</b>: <code>${BUILDER}</code>
 <b>Device</b>: <code>${DEVICE}</code>
 <b>Kernel Version</b>: <code>$(make kernelversion 2>/dev/null)</code>
@@ -122,7 +136,8 @@ send_msg_telegram() {
                 -F chat_id="$chat_id" \
                 -F "disable_web_page_preview=true" \
                 -F "parse_mode=html" \
-                -F caption="Build failed after ${minutes} minutes and ${seconds} seconds." \
+                -F caption="Build failed after ${minutes} minutes and ${seconds} seconds.
+<b>Build number</b>: $(cat $counter_file | awk '{print $2}')st" \
                 -o /dev/null \
                 -w "" >/dev/null 2>&1
         ;;
@@ -131,7 +146,8 @@ send_msg_telegram() {
                 -F "disable_web_page_preview=true" \
                 -F "parse_mode=html" \
                 -F caption="Build took ${minutes} minutes and ${seconds} seconds.
-<b>SHA512</b>: <code>${checksum}</code>" \
+<b>SHA512</b>: <code>${checksum}</code>
+<b>Build number</b>: $(cat $counter_file | awk '{print $2}')st" \
                 -o /dev/null \
                 -w "" >/dev/null 2>&1
 
@@ -237,6 +253,7 @@ build_kernel() {
     echo -e "${LIGHTBLUE}================================="
     echo "Build Started on ${BUILD_HOST}"
     echo "Build status: ${kver}"
+    echo "Build number: $(cat $counter_file | awk '{print $2}')st"
     echo "Builder: ${BUILDER}"
     echo "Device: ${DEVICE}"
     echo "Kernel Version: $(make kernelversion 2>/dev/null)"
@@ -261,6 +278,7 @@ build_kernel() {
         echo -e "${LIGHTBLUE}================================="
         echo -e "${RED}Build failed${LIGHTBLUE} after ${minutes} minutes and ${seconds} seconds"
         echo "See build log for troubleshooting."
+        echo "Build number: $(cat $counter_file | awk '{print $2}')st"
         echo -e "=================================${NOCOLOR}"
         exit 1
     fi
@@ -270,6 +288,7 @@ build_kernel() {
     echo -e "${LIGHTBLUE}================================="
     echo "Build took ${minutes} minutes and ${seconds} seconds."
     echo "SHA512: ${checksum}"
+    echo "Build number: $(cat $counter_file | awk '{print $2}')st"
     echo -e "=================================${NOCOLOR}"
 
     if [ "$SEND_TO_TG" -eq 1 ]; then
