@@ -213,8 +213,11 @@ compile_kernel() {
 
 zip_kernel() {
     # Move kernel image to anykernel zip
+if [ ! -f "./out/arch/${ARCH}/boot/Image.gz-dtb" ]; then
+    cp ./out/arch/${ARCH}/boot/Image.gz ./anykernel
+else
     cp ./out/arch/${ARCH}/boot/Image.gz-dtb ./anykernel
-
+fi
     # Zip the kernel
     cd ./anykernel
     zip -r9 "${zipn}".zip * -x .git README.md *placeholder
@@ -223,11 +226,17 @@ zip_kernel() {
     # Generate checksum of kernel zip
     export checksum=$(sha512sum ./anykernel/"${zipn}".zip | cut -f1 -d ' ')
 
-    # Move the kernel zip to ./out/target
     if [ ! -d "./out/target" ]; then
         mkdir ./out/target
     fi
+
+if [ ! -f "./out/arch/${ARCH}/boot/Image.gz-dtb" ]; then
+    rm -f ./anykernel/Image.gz
+else
     rm -f ./anykernel/Image.gz-dtb
+fi
+
+    # Move the kernel zip to ./out/target
     mv ./anykernel/${zipn}.zip ./out/target
 }
 
@@ -254,7 +263,7 @@ build_kernel() {
 
     compile_kernel
 
-    if [ ! -f "./out/arch/${ARCH}/boot/Image.gz-dtb" ]; then
+    if [ ! -f "./out/arch/${ARCH}/boot/Image.gz-dtb" && ! -f "./out/arch/${ARCH}/boot/Image.gz" ]; then
         if [ "$SEND_TO_TG" -eq 1 ]; then
             send_msg_telegram 2
         fi
