@@ -17,12 +17,6 @@ if [ ! -f "$counter_file" ]; then
 	echo $(echo $(date +"%m")) 0 > "$counter_file"  # Initialize counter file if it doesn't exist
 fi
 
-if [[ ! $(cat $counter_file | awk '{print $1}') == $(echo $(date +"%m")) ]]; then
-	echo $(echo $(date +"%m")) 1 > "$counter_file" # Reset
-else
-	echo $(echo $(date +"%m")) $(($(cat $counter_file | awk '{print $2}') + 1)) > $counter_file
-fi
-
 # Define some things
 # Kernel common
 export ARCH=arm64
@@ -257,6 +251,12 @@ fi
 }
 
 build_kernel() {
+if [[ ! $(cat $counter_file | awk '{print $1}') == $(echo $(date +"%m")) ]]; then
+	echo $(echo $(date +"%m")) 1 > "$counter_file" # Reset
+else
+	echo $(echo $(date +"%m")) $(($(cat $counter_file | awk '{print $2}') + 1)) > $counter_file
+fi
+
     show_defconfigs
 
     echo -e "${LIGHTBLUE}================================="
@@ -280,7 +280,7 @@ build_kernel() {
 
     compile_kernel
 
-    if [ ! -f "./out/arch/${ARCH}/boot/Image.gz-dtb" && ! -f "./out/arch/${ARCH}/boot/Image.gz" ]; then
+    if [ ! -f "./out/arch/${ARCH}/boot/Image.gz-dtb" ] && [ ! -f "./out/arch/${ARCH}/boot/Image.gz" ]; then
         if [ "$SEND_TO_TG" -eq 1 ]; then
             send_msg_telegram 2
         fi
