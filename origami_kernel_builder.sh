@@ -263,7 +263,7 @@ build_kernel() {
 
     compile_kernel
 
-    if [ ! -f "./out/arch/${ARCH}/boot/Image.gz-dtb" && ! -f "./out/arch/${ARCH}/boot/Image.gz" ]; then
+    if [ ! -f "./out/arch/${ARCH}/boot/Image.gz-dtb" ] && [ ! -f "./out/arch/${ARCH}/boot/Image.gz" ]; then
         if [ "$SEND_TO_TG" -eq 1 ]; then
             send_msg_telegram 2
         fi
